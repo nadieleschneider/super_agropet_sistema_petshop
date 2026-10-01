@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Super Agropet - Gestão de Banho e Tosa</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-slate-50 text-slate-800 font-sans">
+
+    <!-- Header -->
+    <header class="bg-emerald-600 text-white shadow-md">
+        <div class="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
+            <div class="flex items-center space-x-3">
+                <span class="text-3xl">🐾</span>
+                <div>
+                    <h1 class="text-2xl font-bold tracking-wide">Super Agropet</h1>
+                    <p class="text-emerald-100 text-xs">Sistema de Gestão e Histórico de Atendimentos</p>
+                </div>
+            </div>
+            <div class="text-right">
+                <span class="text-sm bg-emerald-700 px-3 py-1 rounded-full font-medium">Banco de Dados Local Ativo 💾</span>
+            </div>
+        </div>
+    </header>
+
+    <main class="max-w-7xl mx-auto px-6 py-8 grid grid-cols-1 lg:grid-cols-3 gap-8">
+        
+        <!-- Coluna da Esquerda: Cadastros e Agendamentos -->
+        <div class="space-y-6 lg:col-span-1">
+            
+            <!-- 1. Cadastrar Cliente -->
+            <section class="bg-white p-5 rounded-2xl shadow-sm border border-slate-100">
+                <h2 class="text-base font-bold text-slate-900 mb-3 flex items-center gap-2">
+                    <span>👤</span> 1. Novo Cliente (Tutor)
+                </h2>
+                <form action="/adicionar_cliente" method="POST" class="space-y-3">
+                    <div>
+                        <input type="text" name="nome" placeholder="Nome Completo *" required class="w-full border border-slate-200 rounded-lg p-2 text-sm focus:ring-2 focus:ring-emerald-500 outline-none">
+                    </div>
+                    <div class="grid grid-cols-2 gap-2">
+                        <input type="text" name="telefone" placeholder="Celular / WhatsApp *" required class="w-full border border-slate-200 rounded-lg p-2 text-sm focus:ring-2 focus:ring-emerald-500 outline-none">
+                        <input type="text" name="cpf" placeholder="CPF" class="w-full border border-slate-200 rounded-lg p-2 text-sm focus:ring-2 focus:ring-emerald-500 outline-none">
+                    </div>
+                    <div>
+                        <input type="text" name="endereco" placeholder="Endereço (Rua, Nº, Bairro)" class="w-full border border-slate-200 rounded-lg p-2 text-sm focus:ring-2 focus:ring-emerald-500 outline-none">
+                    </div>
+                    <button type="submit" class="w-full bg-slate-800 hover:bg-slate-900 text-white font-semibold py-2 rounded-lg transition text-xs shadow-sm">
+                        Salvar Cliente 💾
+                    </button>
+                </form>
+            </section>
+
+            <!-- 2. Cadastrar Pet -->
+            <section class="bg-white p-5 rounded-2xl shadow-sm border border-slate-100">
+                <h2 class="text-base font-bold text-slate-900 mb-3 flex items-center gap-2">
+                    <span>🐶</span> 2. Cadastrar Pet
+                </h2>
+                <form action="/adicionar_pet" method="POST" class="space-y-3">
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-600 mb-1">Selecione o Tutor *</label>
+                        <select name="cliente_id" required class="w-full border border-slate-200 rounded-lg p-2 text-sm bg-white focus:ring-2 focus:ring-emerald-500 outline-none">
+                            <option value="">-- Escolha o Cliente --</option>
+                            {% for c in clientes %}
+                            <option value="{{ c.id }}">{{ c.nome }} ({{ c.telefone }})</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="grid grid-cols-2 gap-2">
+                        <input type="text" name="nome" placeholder="Nome do Pet *" required class="w-full border border-slate-200 rounded-lg p-2 text-sm focus:ring-2 focus:ring-emerald-500 outline-none">
+                        <select name="especie" class="w-full border border-slate-200 rounded-lg p-2 text-sm bg-white focus:ring-2 focus:ring-emerald-500 outline-none">
+                            <option value="Cão">Cão</option>
+                            <option value="Gato">Gato</option>
+                            <option value="Outro">Outro</option>
+                        </select>
+                    </div>
+                    <div class="grid grid-cols-3 gap-2">
+                        <input type="text" name="raca" placeholder="Raça" class="w-full border border-slate-200 rounded-lg p-2 text-sm focus:ring-2 focus:ring-emerald-500 outline-none">
+                        <input type="number" step="0.1" name="peso" placeholder="Peso (kg)" class="w-full border border-slate-200 rounded-lg p-2 text-sm focus:ring-2 focus:ring-emerald-500 outline-none">
+                        <select name="porte" class="w-full border border-slate-200 rounded-lg p-2 text-sm bg-white focus:ring-2 focus:ring-emerald-500 outline-none">
+                            <option value="Pequeno">Pequeno</option>
+                            <option value="Médio">Médio</option>
+                            <option value="Grande">Grande</option>
+                            <option value="Gigante">Gigante</option>
+                        </select>
+                    </div>
+                    <button type="submit" class="w-full bg-slate-800 hover:bg-slate-900 text-white font-semibold py-2 rounded-lg transition text-xs shadow-sm">
+                        Cadastrar Pet 🐾
+                    </button>
+                </form>
+            </section>
+
+            <!-- 3. Novo Agendamento / Atendimento -->
+            <section class="bg-white p-5 rounded-2xl shadow-sm border border-slate-100">
+                <h2 class="text-base font-bold text-slate-900 mb-3 flex items-center gap-2">
+                    <span>📅</span> 3. Agendar Banho / Tosa
+                </h2>
+                <form action="/agendar" method="POST" class="space-y-3">
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-600 mb-1">Selecione o Pet *</label>
+                        <select name="pet_id" required class="w-full border border-slate-200 rounded-lg p-2 text-sm bg-white focus:ring-2 focus:ring-emerald-500 outline-none">
+                            <option value="">-- Escolha o Pet --</option>
+                            {% for p in pets %}
+                            <option value="{{ p.id }}">{{ p.nome }} (Tutor: {{ p.tutor.nome }})</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    
+                    <div class="grid grid-cols-2 gap-2">
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-600 mb-1">Horário</label>
+                            <input type="time" name="horario" required class="w-full border border-slate-200 rounded-lg p-2 text-sm focus:ring-2 focus:ring-emerald-500 outline-none">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-600 mb-1">Valor (R$)</label>
+                            <input type="number" step="0.01" name="valor" placeholder="0.00" required class="w-full border border-slate-200 rounded-lg p-2 text-sm font-bold text-emerald-600 focus:ring-2 focus:ring-emerald-500 outline-none">
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-600 mb-1">Serviço Principal</label>
+                        <select name="servico" class="w-full border border-slate-200 rounded-lg p-2 text-sm bg-white focus:ring-2 focus:ring-emerald-500 outline-none">
+                            {% for servico, preco in servicos.items() %}
+                            <option value="{{ servico }}">{{ servico }} (Sugestão: R$ {{ "%.2f"|format(preco) }})</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-2">
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-600 mb-1">Lâmina</label>
+                            <select name="lamina" class="w-full border border-slate-200 rounded-lg p-2 text-sm bg-white focus:ring-2 focus:ring-emerald-500 outline-none">
+                                <option value="N/A">N/A (Só Banho)</option>
+                                <option value="Lâmina 3">Lâmina 3</option>
+                                <option value="Lâmina 4">Lâmina 4</option>
+                                <option value="Lâmina 5">Lâmina 5</option>
+                                <option value="Lâmina 7">Lâmina 7</option>
+                                <option value="Lâmina 10">Lâmina 10</option>
+                                <option value="Tesoura">Tesoura</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-600 mb-1">Perfume?</label>
+                            <select name="perfume" class="w-full border border-slate-200 rounded-lg p-2 text-sm bg-white focus:ring-2 focus:ring-emerald-500 outline-none">
+                                <option value="Sim">Sim</option>
+                                <option value="Não">Não (Alérgico)</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-600 mb-1">Observações / Histórico</label>
+                        <input type="text" name="detalhes" placeholder="Ex: Cuidado com nó na orelha, unhas aparadas" class="w-full border border-slate-200 rounded-lg p-2 text-sm focus:ring-2 focus:ring-emerald-500 outline-none">
+                    </div>
+
+                    <button type="submit" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-semibold py-2.5 rounded-lg transition text-sm shadow-sm">
+                        Salvar na Agenda & Histórico 📌
+                    </button>
+                </form>
+            </section>
+
+        </div>
+
+        <!-- Coluna da Direita: Agenda e Histórico Geral -->
+        <section class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 lg:col-span-2">
+            <div class="flex justify-between items-center mb-6">
+                <h2 class="text-lg font-bold text-slate-900 flex items-center gap-2">
+                    <span>📋</span> Atendimentos & Histórico Salvo
+                </h2>
+                <span class="text-xs bg-slate-100 text-slate-600 px-3 py-1 rounded-full font-medium">
+                    Total Registrado: {{ atendimentos|length }}
+                </span>
+            </div>
+
+            <div class="overflow-x-auto">
+                <table class="w-full text-left border-collapse">
+                    <thead>
+                        <tr class="border-b border-slate-100 text-xs font-bold text-slate-400 uppercase tracking-wider">
+                            <th class="py-3 px-2">Horário</th>
+                            <th class="py-3 px-2">Pet / Tutor / Contato</th>
+                            <th class="py-3 px-2">Detalhes (Peso/Raça)</th>
+                            <th class="py-3 px-2">Serviço & Lâmina</th>
+                            <th class="py-3 px-2">Valor</th>
+                            <th class="py-3 px-2 text-center">Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-slate-100 text-sm">
+                        {% for item in atendimentos %}
+                        <tr class="hover:bg-slate-50 transition">
+                            <td class="py-4 px-2 font-bold text-emerald-600">{{ item.horario }}</td>
+                            <td class="py-4 px-2">
+                                <div class="font-bold text-slate-900">{{ item.pet_obj.nome }}</div>
+                                <div class="text-xs text-slate-700">Tutor: {{ item.pet_obj.tutor.nome }}</div>
+                                <div class="text-xs text-slate-500">📞 {{ item.pet_obj.tutor.telefone }}</div>
+                                {% if item.pet_obj.tutor.cpf %}
+                                <div class="text-xs text-slate-400">CPF: {{ item.pet_obj.tutor.cpf }}</div>
+                                {% endif %}
+                            </td>
+                            <td class="py-4 px-2">
+                                <div class="text-slate-700">{{ item.pet_obj.raca }} ({{ item.pet_obj.especie }})</div>
+                                <div class="text-xs text-slate-500 font-medium">⚖️ {{ item.pet_obj.peso }} kg • {{ item.pet_obj.porte }}</div>
+                            </td>
+                            <td class="py-4 px-2">
+                                <div class="font-medium text-slate-800">{{ item.servico }}</div>
+                                <div class="text-xs text-slate-500">Lâmina: {{ item.lamina }} • Perfume: {{ item.perfume }}</div>
+                                {% if item.detalhes %}
+                                <div class="text-xs text-amber-600 mt-0.5">Obs: {{ item.detalhes }}</div>
+                                {% endif %}
+                                <div class="mt-1">
+                                    {% if item.status == 'Agendado' %}
+                                    <span class="bg-amber-100 text-amber-700 text-[10px] px-2 py-0.5 rounded-full font-bold">Agendado</span>
+                                    {% else %}
+                                    <span class="bg-emerald-100 text-emerald-700 text-[10px] px-2 py-0.5 rounded-full font-bold">Concluído ✓</span>
+                                    {% endif %}
+                                </div>
+                            </td>
+                            <td class="py-4 px-2 font-bold text-slate-900">
+                                R$ {{ "%.2f"|format(item.valor) }}
+                            </td>
+                            <td class="py-4 px-2 text-center">
+                                <div class="flex items-center justify-center gap-2">
+                                    {% if item.status == 'Agendado' %}
+                                    <a href="/concluir/{{ item.id }}" title="Marcar como Concluído" class="bg-emerald-50 text-emerald-600 p-2 rounded-lg hover:bg-emerald-100 transition text-xs font-semibold">
+                                        ✓
+                                    </a>
+                                    {% endif %}
+                                    <a href="/remover/{{ item.id }}" title="Excluir Registro" class="bg-rose-50 text-rose-600 p-2 rounded-lg hover:bg-rose-100 transition text-xs">
+                                        ✕
+                                    </a>
+                                </div>
+                            </td>
+                        </tr>
+                        {% else %}
+                        <tr>
+                            <td colspan="6" class="text-center py-10 text-slate-400 text-sm">
+                                Nenhum atendimento registrado. Cadastre um cliente, um pet e adicione o atendimento ao lado!
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+    </main>
+
+</body>
+</html>
